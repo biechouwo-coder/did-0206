@@ -1,0 +1,4 @@
+  File "04_did_regression.py", line 125
+    formula = f"{Y_var} ~ {DID_var} + {' + ' + '.join(control_vars) + '} + C(city_name) + C(year)'
+                                                                                                 ^
+SyntaxError: EOL while scanning string literal

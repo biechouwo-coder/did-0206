@@ -8,7 +8,9 @@
       "Bash(where:*)",
       "Bash(py:*)",
       "Bash(git push:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(tee:*)",
+      "Bash(cmd /c \"cd /d c:\\\\Users\\\\HP\\\\Desktop\\\\did-0206\\\\did_analysis && py 05_did_twfe_numpy.py > did_twfe_numpy_output.txt 2>&1\")"
     ]
   }
 }
