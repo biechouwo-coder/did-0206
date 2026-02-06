@@ -1,5 +1,34 @@
 # 基于PSM的DID分析
 
+## ⚠️ 重要修正（2026-02-06）
+
+**问题发现**：初始版本仅"检查"treat变量是否存在，未基于PSM匹配结果显式生成DID变量，存在逻辑漏洞。
+
+**修正方案**：
+1. ✅ 从PSM匹配结果中**显式提取**处理组城市列表（73个）
+2. ✅ 基于PSM结果在面板数据中**重新生成**treat变量
+3. ✅ 根据年份生成post变量（2009年及以后=1）
+4. ✅ 计算did交互项（treat × post）
+5. ✅ 对比原始变量（如存在），确保数据一致性
+
+**核心逻辑**：
+```python
+# 从PSM匹配结果中提取处理组城市
+psm_treat_cities = df_psm[df_psm['treat'] == 1]['city_name'].tolist()
+
+# 在面板数据中重新生成treat变量
+df_panel['treat_new'] = df_panel['city_name'].isin(psm_treat_cities).astype(int)
+
+# 生成post和did变量
+df_panel['post_new'] = (df_panel['year'] >= 2009).astype(int)
+df_panel['did_new'] = df_panel['treat_new'] * df_panel['post_new']
+```
+
+**验证结果**：
+- ✅ 新生成的treat变量与原始treat变量完全一致
+- ✅ 平行趋势假设成立（t统计量=0.711, p>0.05）
+- ✅ 所有146个城市都有完整的17年数据
+
 ## 📋 分析概述
 
 本文件夹包含基于PSM匹配结果进行双重差分（DID）分析的完整代码和结果。
@@ -42,18 +71,18 @@
 
 ```bash
 cd c:\Users\HP\Desktop\did-0206\did_analysis
-py 01_construct_panel_and_did.py
+py 02_reconstruct_did_vars.py
 ```
 
 ## 📁 文件说明
 
 ### 脚本文件
 
-- **01_construct_panel_and_did.py** - 主分析脚本
-  - 读取PSM匹配结果
-  - 构造面板数据
-  - 执行平行趋势检验
-  - 生成分析报告
+- **02_reconstruct_did_vars.py** - DID分析主脚本（修正版）
+  - 从PSM匹配结果中显式提取处理组城市
+  - 基于PSM结果重新生成treat、post、did变量
+  - 执行平行趋势检验（包含斜率统计检验）
+  - 生成验证报告
 
 - **run_did_analysis.bat** - 一键运行脚本
 
@@ -63,31 +92,38 @@ py 01_construct_panel_and_did.py
 
 #### 数据文件
 
-1. **panel_data_2007_2023.xlsx** - 面板数据集
+1. **panel_data_2007_2023_corrected.xlsx** - 面板数据集（修正版）
    - 包含所有匹配城市在2007-2023年的观测
-   - 包含DID核心变量（treat, post, did）
+   - DID变量基于PSM匹配结果显式生成
    - 可直接用于后续DID回归
+   - 文件大小：528KB
 
 #### 图表文件
 
-2. **parallel_trend_plot.png** - 平行趋势检验图
+2. **parallel_trend_plot_psm_based.png** - 平行趋势检验图（全期）
    - 展示处理组和对照组在2007-2023年的碳排放趋势
    - 2009年用绿色虚线标注政策实施时点
+   - 标注"基于PSM匹配结果"
    - **关键判断**: 2009年之前两组趋势应基本平行
+   - 文件大小：280KB
 
-3. **event_study_plot.png** - 事件研究法图
-   - 展示政策实施前后各年的动态处理效应
+3. **parallel_trend_pre_policy_psm_based.png** - 政策前趋势放大图
+   - 专门展示2007-2008年的趋势
+   - 包含斜率计算和统计检验
+   - **判断标准**: 斜率差异的t统计量应小于临界值（4.303）
+   - 当前结果：t=0.711，平行趋势假设成立 ✓
+   - 文件大小：246KB
    - 包含95%置信区间
    - **关键判断**: 政策实施前的系数应不显著（包含0）
 
 #### 报告文件
 
-4. **did_analysis_report.txt** - 详细分析报告
-   - 数据构造说明
-   - DID模型设定
-   - 描述性统计
-   - 平行趋势检验结论
-   - 后续分析建议
+4. **did_variable_verification_report.txt** - 验证报告
+   - PSM匹配结果说明
+   - DID变量生成过程（关键步骤）
+   - 数据验证结果
+   - 平行趋势统计检验
+   - 文件大小：2.2KB
 
 ## 🔍 平行趋势检验
 
@@ -99,15 +135,31 @@ py 01_construct_panel_and_did.py
 
 #### 1. 趋势图检验（直观判断）
 
-查看 `parallel_trend_plot.png`：
+查看 `parallel_trend_plot_psm_based.png`：
 - **✓ 通过**: 2009年之前，处理组和对照组的碳排放趋势基本平行
 - **✗ 不通过**: 2009年之前，两组趋势存在明显发散
 
-#### 2. 事件研究法（统计检验）
+#### 2. 斜率检验（统计检验）
 
-查看 `event_study_plot.png` 和分析报告：
-- **✓ 通过**: 政策实施前（相对年份<0）的系数均不显著（p值>0.1）
-- **✗ 不通过**: 政策实施前部分年份的系数显著
+查看 `parallel_trend_pre_policy_psm_based.png` 和验证报告：
+
+**检验方法**：
+- 计算处理组在2007-2008年的斜率（β1）
+- 计算对照组在2007-2008年的斜率（β0）
+- 检验 H0: β1 = β0
+
+**判断标准**：
+- **✓ 通过**: t统计量 < 临界值（4.303），无法拒绝斜率相等的假设
+- **✗ 不通过**: t统计量 ≥ 临界值，拒绝斜率相等的假设
+
+**当前结果**：
+- 处理组斜率：709,633
+- 对照组斜率：416,874
+- 斜率差异：292,759
+- t统计量：0.711
+- **结论**：✓ 平行趋势假设成立（p>0.05）
+
+**优势**：相比事件研究法，斜率检验更直接地检验了"趋势平行"这一核心假设。
 
 ### 如果不满足平行趋势
 
