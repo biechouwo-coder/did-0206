@@ -6,7 +6,8 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(where:*)",
-      "Bash(py:*)"
+      "Bash(py:*)",
+      "Bash(git push:*)"
     ]
   }
 }
