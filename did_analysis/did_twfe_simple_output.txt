@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "05_did_twfe_simple.py", line 9, in <module>
-    import statsmodels.formula.api as smf
-ModuleNotFoundError: No module named 'statsmodels'

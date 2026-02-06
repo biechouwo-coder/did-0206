@@ -1,4 +1,0 @@
-  File "04_did_regression_fixed.py", line 89
-    formula = Y_var + " ~ " + DID_var + " + " + controls_str + " + " + "C(city_name) + " + " + "C(year)"
-                                                                                                ^
-SyntaxError: invalid syntax
