@@ -10,7 +10,11 @@
       "Bash(git push:*)",
       "Bash(ls:*)",
       "Bash(tee:*)",
-      "Bash(cmd /c \"cd /d c:\\\\Users\\\\HP\\\\Desktop\\\\did-0206\\\\did_analysis && py 05_did_twfe_numpy.py > did_twfe_numpy_output.txt 2>&1\")"
+      "Bash(cmd /c \"cd /d c:\\\\Users\\\\HP\\\\Desktop\\\\did-0206\\\\did_analysis && py 05_did_twfe_numpy.py > did_twfe_numpy_output.txt 2>&1\")",
+      "Bash(tasklist:*)",
+      "Bash(/c/Users/HP/AppData/Local/Microsoft/WindowsApps/python -c \"print\\(''Hello''\\)\")",
+      "Bash(\"C:\\\\Users\\\\HP\\\\AppData\\\\Local\\\\Microsoft\\\\WindowsApps\\\\python.exe\" add_ln_carbon_intensity.py)",
+      "Bash(/c/Users/HP/AppData/Local/Programs/Python/Python38-32/python.exe:*)"
     ]
   }
 }
