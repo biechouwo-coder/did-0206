@@ -394,6 +394,17 @@ def main():
         df['ln_碳排放强度'] = df['ln_碳排放量_吨'] - df['ln_real_gdp']
         print("  [OK] 创建变量: ln_碳排放强度")
 
+    # 2.1 对因变量进行1%缩尾处理
+    print(f"\n对ln_碳排放强度进行1%缩尾处理...")
+    y_lower = df['ln_碳排放强度'].quantile(0.01)
+    y_upper = df['ln_碳排放强度'].quantile(0.99)
+    print(f"  缩尾前: 1%分位数={y_lower:.4f}, 99%分位数={y_upper:.4f}")
+
+    df['ln_碳排放强度'] = df['ln_碳排放强度'].clip(lower=y_lower, upper=y_upper)
+
+    n_winsorized = ((df['ln_碳排放强度'] == y_lower) | (df['ln_碳排放强度'] == y_upper)).sum()
+    print(f"  [OK] 缩尾完成: {n_winsorized}个观测被调整")
+
     # 3. 定义回归变量
     y_var = 'ln_碳排放强度'
     x_vars = ['DID', 'ln_real_gdp', 'ln_人口密度', 'ln_金融发展水平', '第二产业占GDP比重']
