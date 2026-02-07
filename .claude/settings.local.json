@@ -14,7 +14,8 @@
       "Bash(tasklist:*)",
       "Bash(/c/Users/HP/AppData/Local/Microsoft/WindowsApps/python -c \"print\\(''Hello''\\)\")",
       "Bash(\"C:\\\\Users\\\\HP\\\\AppData\\\\Local\\\\Microsoft\\\\WindowsApps\\\\python.exe\" add_ln_carbon_intensity.py)",
-      "Bash(/c/Users/HP/AppData/Local/Programs/Python/Python38-32/python.exe:*)"
+      "Bash(/c/Users/HP/AppData/Local/Programs/Python/Python38-32/python.exe:*)",
+      "Bash(\"C:\\\\Users\\\\HP\\\\AppData\\\\Local\\\\Microsoft\\\\WindowsApps\\\\python.exe\":*)"
     ]
   }
 }
