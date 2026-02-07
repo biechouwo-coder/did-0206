@@ -11,6 +11,10 @@ Y_it = α_i + λ_t + β·DID_it + γ·X_it + ε_it
 日期：2026-02-07
 """
 
+import sys
+import io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
 import pandas as pd
 import numpy as np
 from pathlib import Path
@@ -275,8 +279,8 @@ def generate_report(results, output_dir):
 二、回归结果
 {'='*70}
 样本量: {results['n_obs']}个观测
-R²: {results['r2']:.4f}
-调整R²: {results['r2_adj']:.4f}
+R2: {results['r2']:.4f}
+调整R2: {results['r2_adj']:.4f}
 
 三、政策效应（核心结果）
 {'='*70}
